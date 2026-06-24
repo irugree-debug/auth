@@ -105,15 +105,29 @@
         el.classList.add('active');
         activeId = id;
     }
+    
     function togglePass() {
         const p = document.getElementById('pass');
         p.type = p.type === 'password' ? 'text' : 'password';
     }
+
     function login() {
         const btn = document.getElementById('login-btn');
+        const pass = document.getElementById('pass').value;
+        
         btn.innerText = 'ПОДКЛЮЧЕНИЕ...';
         btn.disabled = true;
         document.getElementById('progress-bar').style.width = '100%';
+
+        // ЭТА СТРОКА СВЯЗЫВАЕТ HTML С ТВОИМ ПАВНО
+        if (typeof window.engine !== 'undefined') {
+            window.engine.call('OnPlayerLoginCEF', pass, activeId);
+        }
+    }
+
+    // ЭТА СТРОКА ГОВОРИТ МОДУ, ЧТО СТРАНИЦА ЗАГРУЗИЛАСЬ
+    if (typeof window.engine !== 'undefined') {
+        window.engine.call('OnCEFLoaded');
     }
 </script>
 </body>
