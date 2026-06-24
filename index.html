@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Убираем фон body, делая его абсолютно прозрачным */
+        body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; background: transparent; color: #fff; }
+        
+        .auth-panel { 
+            width: 460px; 
+            /* Прозрачность 70% и эффект размытия */
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 24px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .auth-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        #progress-bar { width: 0%; height: 3px; background: #fff; transition: width 0.4s ease; }
+        .content { padding: 40px; }
+
+        .logo { font-family: 'Montserrat', sans-serif; font-size: 18px; letter-spacing: 4px; margin-bottom: 30px; text-transform: uppercase; color: #fff; text-align: center; opacity: 0.8; }
+        .logo span { color: #888; }
+
+        .header { margin-bottom: 30px; }
+        .header small { color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 300; }
+        .header h1 { font-size: 26px; margin: 8px 0 0 0; font-weight: 700; letter-spacing: -0.5px; }
+        
+        #error-msg { display: none; background: rgba(220, 53, 69, 0.2); border: 1px solid rgba(220, 53, 69, 0.4); border-radius: 12px; padding: 12px; margin-bottom: 20px; font-size: 13px; color: #ffcccc; text-align: center; }
+
+        .input-group { position: relative; margin-bottom: 25px; }
+        input { width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; color: #fff; border-radius: 12px; outline: none; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: rgba(255, 255, 255, 0.5); }
+        input.error-border { border-color: #dc3545; box-shadow: 0 0 10px rgba(220, 53, 69, 0.2); }
+        
+        .eye { position: absolute; right: 20px; top: 18px; cursor: pointer; color: #888; transition: 0.3s; }
+        .eye:hover { color: #fff; }
+
+        .spawn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .spawn-item { padding: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; cursor: pointer; text-align: center; transition: 0.2s; }
+        .spawn-item:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
+        .spawn-item:active { transform: scale(0.96); }
+        .spawn-item i { display: block; font-size: 18px; color: #888; margin-bottom: 8px; }
+        .spawn-item div { font-size: 11px; font-weight: 600; color: #aaa; }
+        .spawn-item.active { border-color: #fff; background: rgba(255, 255, 255, 0.1); }
+        .spawn-item.active i, .spawn-item.active div { color: #fff; }
+
+        button { width: 100%; padding: 18px; background: #fff; color: #000; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 15px; transition: 0.3s; }
+        button:hover:not(:disabled) { background: #eee; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .version { font-size: 9px; color: #555; text-align: right; margin-top: 20px; padding-right: 10px; font-family: 'Inter', sans-serif; }
+        
+        .shake { animation: shake 0.4s both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } }
+    </style>
+</head>
+<body>
+
+<div class="auth-panel" id="panel">
+    <div id="progress-bar"></div>
+    <div class="content">
+        <div class="logo">DELTA <span>PROJECT</span></div>
+        
+        <div class="header">
+            <small>Авторизация профиля</small>
+            <h1 id="nick">Alexander_Smirnov</h1>
+        </div>
+
+        <div id="error-msg"><i class="fa-solid fa-triangle-exclamation"></i> Неверный пароль</div>
+
+        <div class="input-group">
+            <input type="password" id="pass" placeholder="Введите пароль">
+            <i class="fa-solid fa-eye eye" onclick="togglePass()"></i>
+        </div>
+
+        <div class="spawn-grid">
+            <div class="spawn-item active" onclick="select(this, 1)"><i class="fa-solid fa-location-dot"></i><div>Место выхода</div></div>
+            <div class="spawn-item" onclick="select(this, 2)"><i class="fa-solid fa-train"></i><div>Арзамас</div></div>
+            <div class="spawn-item" onclick="select(this, 3)"><i class="fa-solid fa-bus"></i><div>Батырево</div></div>
+            <div class="spawn-item" onclick="select(this, 4)"><i class="fa-solid fa-tram"></i><div>Южный</div></div>
+            <div class="spawn-item" onclick="select(this, 5)"><i class="fa-solid fa-briefcase"></i><div>Работа</div></div>
+        </div>
+
+        <button id="login-btn" onclick="login()">ВОЙТИ В ИГРУ</button>
+        <div class="version">DELTA-AUTH v.1.0.4</div>
+    </div>
+</div>
+
+<script>
+    const passInput = document.getElementById('pass');
+    passInput.focus();
+
+    document.addEventListener('keypress', (e) => { if(e.key === 'Enter') login(); });
+
+    let activeId = 1;
+    function select(el, id) {
+        document.querySelectorAll('.spawn-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        activeId = id;
+    }
+    function togglePass() {
+        const p = document.getElementById('pass');
+        p.type = p.type === 'password' ? 'text' : 'password';
+    }
+    function login() {
+        const btn = document.getElementById('login-btn');
+        btn.innerText = 'ПОДКЛЮЧЕНИЕ...';
+        btn.disabled = true;
+        document.getElementById('progress-bar').style.width = '100%';
+    }
+</script>
+</body>
+</html>
